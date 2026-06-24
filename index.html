@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SteelLoadings by MetalExpert</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f4f0;--bg1:#fff;--bg2:#f0ede6;--bg3:#e8e4dc;
+  --border:#ddd9d0;--border2:#ccc8be;
+  --text:#1a2030;--muted:#7a8090;--dim:#c0bdb5;
+  --accent:#1a4080;--gold:#c8a020;--green:#1a7a40;
+  --red:#c02828;--blue:#1a5090;
+  --sans:'Inter',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+body.dark{
+  --bg:#060a0f;--bg1:#0a1018;--bg2:#0f1825;--bg3:#151f2e;
+  --border:#1a2535;--border2:#243040;
+  --text:#c8d8e8;--muted:#4a6080;--dim:#1a2a3a;
+  --accent:#e8a020;--gold:#e8a020;--green:#22c98a;
+  --red:#ff4455;--blue:#38b4f8;
+}
+body.dark .hdr{background:#0a1018;border-bottom:1px solid #1a2535}
+body.dark .hbtn{border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.6)}
+body.dark .hbtn.gold{background:rgba(232,160,32,.15);border-color:rgba(232,160,32,.4);color:var(--accent)}
+body.dark .toolbar{background:var(--bg2);border-bottom-color:var(--border)}
+body.dark .tw thead tr{background:var(--bg2)}
+body.dark tbody tr:hover{background:rgba(255,255,255,.03)}
+body.dark tbody tr.nr{background:rgba(232,160,32,.04);border-left-color:var(--accent)}
+body.dark tbody tr.nr:hover{background:rgba(232,160,32,.07)}
+body.dark tbody tr.sel{background:rgba(56,180,248,.07)!important}
+body.dark .modal-box{background:var(--bg2);border-color:var(--border)}
+body.dark .modal-body{color:#94a3b8}
+body.dark .copy{background:var(--bg1);border-color:var(--border)}
+body.dark .info-panel{background:var(--bg2)!important;border-color:var(--border)!important}
+body.dark .info-panel h4{color:var(--text)!important}
+body.dark .mbtn.sec{background:var(--bg3);color:var(--text);border-color:var(--border)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px}
+
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:42px;background:var(--accent);flex-shrink:0}
+.brand{display:flex;align-items:center;gap:10px}
+.bname{font-size:16px;font-weight:600;color:#fff;letter-spacing:.3px}
+.bname span{color:var(--gold)}
+.btag{font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.5);text-transform:uppercase;padding-left:10px;border-left:1px solid rgba(255,255,255,.2)}
+.hdr-r{display:flex;align-items:center;gap:12px}
+.hstat{display:flex;flex-direction:column;align-items:flex-end}
+.hstat-v{font-size:15px;font-weight:600;color:#fff;line-height:1}
+.hstat-l{font-size:8px;letter-spacing:1.5px;color:rgba(255,255,255,.5);text-transform:uppercase}
+.hbtn{padding:5px 14px;font-size:11px;font-family:var(--sans);background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;cursor:pointer;border-radius:4px;font-weight:500;transition:all .15s}
+.hbtn:hover{background:rgba(255,255,255,.22)}
+.hbtn.gold{background:var(--gold);border-color:var(--gold);color:#1a2030;font-weight:600}
+.hbtn.gold:hover{background:#d4b030}
+
+.toolbar{height:36px;display:flex;align-items:center;padding:0 20px;gap:0;background:var(--bg1);border-bottom:2px solid var(--border);flex-shrink:0}
+.tbg{display:flex;align-items:center;gap:3px;margin-right:14px;padding-right:14px;border-right:1px solid var(--border)}
+.tbtn{padding:4px 10px;font-size:11px;font-family:var(--sans);background:transparent;border:1px solid transparent;color:var(--muted);cursor:pointer;border-radius:3px;font-weight:500;transition:all .1s}
+.tbtn:hover{color:var(--text);background:var(--bg2)}
+.tbtn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tsearch{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:11px;padding:3px 10px;border-radius:4px;outline:none;width:160px}
+.tsearch:focus{border-color:var(--accent)}
+.tsearch::placeholder{color:var(--muted)}
+.ttag{display:inline-flex;align-items:center;gap:4px;background:#e8f0f8;border:1px solid #b8d0e8;color:var(--blue);font-size:11px;padding:2px 8px;border-radius:3px;cursor:pointer;margin-left:4px}
+.ttag:hover{background:#d8e8f8}
+.ttag .x{font-size:14px;line-height:1}
+.tact{padding:4px 12px;font-size:11px;font-family:var(--sans);border:1px solid var(--border);color:var(--muted);cursor:pointer;border-radius:3px;background:var(--bg1);margin-left:6px;font-weight:500}
+.tact:hover{color:var(--text);border-color:var(--accent);background:var(--bg2)}
+.tact.green{color:var(--green);border-color:#b0d0b8}
+.tact.blue{color:var(--blue);border-color:#b0c8e0}
+
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;pointer-events:none;position:absolute;width:100%;height:100%;margin:0;padding:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);border:2px solid #fff;cursor:pointer;pointer-events:all;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--accent);border:2px solid #fff;cursor:pointer;pointer-events:all}
+
+.tw{flex:1;overflow:auto}
+.tw::-webkit-scrollbar{width:6px;height:6px}
+.tw::-webkit-scrollbar-track{background:var(--bg2)}
+.tw::-webkit-scrollbar-thumb{background:var(--dim);border-radius:3px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead{position:sticky;top:0;z-index:10}
+thead tr{background:var(--bg2);border-bottom:2px solid var(--border2)}
+th{padding:6px 10px;font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);font-family:var(--sans);font-weight:600;text-align:left;white-space:nowrap;cursor:pointer;border-right:1px solid var(--border);user-select:none}
+th:hover{color:var(--text)}th.s{color:var(--accent)}
+.sa{margin-left:3px;opacity:.5}th.s .sa{opacity:1}
+tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .05s}
+tbody tr:hover{background:#f0f4fa}
+tbody tr.nr{border-left:3px solid var(--gold);background:#fffdf5}
+tbody tr.nr:hover{background:#fff8e8}
+tbody tr.sel{background:#e8f0fa!important}
+td{padding:5px 10px;white-space:nowrap;border-right:1px solid var(--border)}
+.nb{font-size:8px;font-weight:700;background:#fff3d0;color:#8a6000;padding:1px 4px;border-radius:2px;letter-spacing:.5px;border:1px solid #e0c060}
+.pl{cursor:pointer}.pl:hover{color:var(--accent)!important;text-decoration:underline}
+
+.info-panel{background:#fff;font-family:var(--sans)}
+.ip-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:12px}
+.ip-key{color:var(--muted)}
+.ip-val{color:var(--text);font-weight:500;text-align:right}
+.ip-section{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);font-weight:600;margin:12px 0 6px;padding-bottom:3px;border-bottom:1px solid var(--border)}
+.copy{height:22px;flex-shrink:0;display:flex;align-items:center;padding:0 20px;background:var(--bg2);border-top:1px solid var(--border);font-size:10px;color:var(--muted);font-family:var(--sans)}
+
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center}
+.modal-ov.open{display:flex}
+.modal-box{background:#fff;border:1px solid var(--border);border-radius:8px;max-width:640px;width:92%;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.modal-hdr{padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-title{font-size:15px;font-weight:600;color:var(--text)}
+.modal-x{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1}
+.modal-x:hover{color:var(--text)}
+.modal-body{padding:16px 20px;overflow-y:auto;flex:1;font-size:13px;color:#445;line-height:1.7}
+.modal-body b{color:var(--text)}.modal-body i{color:var(--muted)}
+.modal-foot{padding:10px 20px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0}
+.mbtn{padding:7px 18px;font-size:11px;font-family:var(--sans);border-radius:4px;cursor:pointer;font-weight:500}
+.mbtn.primary{background:var(--accent);color:#fff;border:1px solid var(--accent)}.mbtn.primary:hover{background:#153570}
+.mbtn.sec{background:var(--bg2);color:var(--text);border:1px solid var(--border)}.mbtn.sec:hover{background:var(--bg3)}
+.mbtn.blue{background:#e8f0f8;color:var(--blue);border:1px solid #b8d0e8}.mbtn.blue:hover{background:#d8e8f8}
+
+.brief-c{font-size:13px;color:#445;line-height:1.75}
+.brief-c h3{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);font-weight:600;margin:14px 0 5px;padding-bottom:3px;border-bottom:1px solid var(--border)}
+.brief-c h3:first-child{margin-top:0}
+.brief-c p{margin-bottom:8px}
+.brief-c p b{color:var(--text)}
+.brief-tbl{width:100%;border-collapse:collapse;margin:8px 0 14px;font-size:12px}
+.brief-tbl th{text-align:left;font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);padding:4px 8px;border-bottom:2px solid var(--border);background:var(--bg2)}
+.brief-tbl td{padding:4px 8px;color:var(--text);border-bottom:1px solid var(--border)}
+.brief-tbl td:nth-child(2){font-weight:600;color:var(--accent);text-align:right}
+
+.loader-ov{position:fixed;inset:0;background:rgba(245,244,240,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:200}
+.sp{width:32px;height:32px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lt{font-size:12px;color:var(--muted);letter-spacing:.5px}
+.ls2{font-size:10px;color:var(--dim)}
+
+@media print{body>*:not(#parea){display:none!important}#parea{display:block!important;font-family:Georgia,serif;font-size:11pt;color:#000;padding:15mm;line-height:1.6}#parea h1{font-size:18pt;margin-bottom:4pt;color:#1a4080}#parea h3{font-size:10pt;margin-top:12pt;margin-bottom:3pt;text-transform:uppercase;letter-spacing:1pt;color:#1a4080}#parea table{width:100%;border-collapse:collapse;margin:6pt 0;font-size:9pt}#parea th{border-bottom:1.5pt solid #1a4080;padding:2pt 5pt;text-align:left;font-size:8pt;text-transform:uppercase}#parea td{padding:2pt 5pt;border-bottom:.5pt solid #ddd}#parea .pfoot{margin-top:14pt;font-size:8pt;color:#666;border-top:.5pt solid #ccc;padding-top:5pt}}
+#parea{display:none}
+</style>
+</head>
+<body style="display:flex;flex-direction:column;height:100vh">
+<div class="loader-ov" id="loader">
+  <div class="sp"></div>
+  <div class="lt" id="lt">Loading from Google Sheets...</div>
+  <div class="ls2" id="ls2">connecting</div>
+</div>
+
+<div class="hdr">
+  <div class="brand">
+    <div class="bname">Steel<span>Loadings</span></div>
+    <div style="width:1px;height:18px;background:rgba(255,255,255,.2)"></div>
+    <div class="btag">by MetalExpert</div>
+  </div>
+  <div class="hdr-r">
+    <div class="hstat"><div class="hstat-v" id="h-total">—</div><div class="hstat-l">Signals</div></div>
+    <div class="hstat"><div class="hstat-v" id="h-vol">—</div><div class="hstat-l">Total kt</div></div>
+    <div class="hstat"><div class="hstat-v" id="h-new" style="color:var(--gold)">—</div><div class="hstat-l">New</div></div>
+    <button class="hbtn gold" onclick="openM('brief')">● New Loading Brief</button>
+    <button class="hbtn" onclick="openM('about')">About</button>
+    <button class="hbtn" id="theme-btn" onclick="toggleTheme()" style="min-width:60px">Dark</button>
+  </div>
+</div>
+
+<div class="toolbar">
+  <div class="tbg">
+    <button class="tbtn on" onclick="setV(this,'all')">All</button>
+    <button class="tbtn" onclick="setV(this,'new')">New</button>
+    <button class="tbtn" onclick="setV(this,'scrap')">Scrap</button>
+    <button class="tbtn" onclick="setV(this,'billet')">Billet</button>
+    <button class="tbtn" onclick="setV(this,'hrc')">HRC</button>
+    <button class="tbtn" onclick="setV(this,'other')">Other</button>
+  </div>
+  <div class="tbg">
+    <input class="tsearch" type="text" placeholder="Search port, country, commodity..." oninput="doSearch(this.value)">
+    <span id="atag" style="display:none" class="ttag" onclick="clearF()">
+      <span id="atag-n"></span><span class="x">×</span>
+    </span>
+  </div>
+  <div class="tbg" style="gap:8px;align-items:center">
+    <div style="position:relative;width:180px;height:20px">
+      <div style="position:absolute;top:50%;left:0;right:0;height:4px;background:var(--border2);border-radius:2px;transform:translateY(-50%)"></div>
+      <div id="sfill" style="position:absolute;height:4px;background:var(--accent);top:50%;transform:translateY(-50%);pointer-events:none;border-radius:2px;left:0;right:0;opacity:.7"></div>
+      <input type="range" id="sl-from" min="0" max="1" value="0" step="1" oninput="updSlider()">
+      <input type="range" id="sl-to" min="0" max="1" value="1" step="1" oninput="updSlider()">
+    </div>
+    <span id="slbl" style="font-size:11px;color:var(--text);font-weight:500;white-space:nowrap;min-width:130px;background:var(--bg);border:1px solid var(--border);padding:2px 8px;border-radius:4px">— — —</span>
+    <button class="tbtn" onclick="clearSlider()" style="padding:2px 8px;font-size:11px">✕</button>
+  </div>
+  <div style="flex:1"></div>
+  <span style="font-size:11px;color:var(--muted)">Showing <span id="showing" style="color:var(--text);font-weight:600">—</span> of <span id="total-c" style="color:var(--text)">—</span> · <span id="showing-v" style="color:var(--accent);font-weight:600">—</span> kt</span>
+  <button class="tact blue" onclick="exportXLS()">↓ Excel</button>
+  <button class="tact green" onclick="loadData()">↻ Refresh</button>
+</div>
+
+<div style="display:flex;flex:1;overflow:hidden"><div class="tw">
+  <table>
+    <thead><tr>
+      <th style="width:110px" onclick="sb('comm')">Commodity<span class="sa">↕</span></th>
+      <th style="width:140px">Likely Cargo</th>
+      <th style="width:86px" onclick="sb('vol')" class="s">Volume<span class="sa">↓</span></th>
+      <th style="width:155px" onclick="sb('pol')">Origin Port<span class="sa">↕</span></th>
+      <th style="width:55px" onclick="sb('col')">Ctry<span class="sa">↕</span></th>
+      <th style="width:155px" onclick="sb('pod')">Dest Port<span class="sa">↕</span></th>
+      <th style="width:55px" onclick="sb('cod')">Ctry<span class="sa">↕</span></th>
+      <th style="width:82px" onclick="sb('ls')">Load From<span class="sa">↕</span></th>
+      <th style="width:82px" onclick="sb('le')">Load To<span class="sa">↕</span></th>
+      <th style="width:200px">Producer</th>
+    </tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+</div><div class="copy">© MetalExpert · SteelLoadings</div>
+
+<div class="modal-ov" id="m-about" onclick="if(event.target===this)closeM('about')">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div>
+        <div class="modal-title">Steel<span style="color:var(--accent)">Loadings</span></div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:1px">STEEL ORDER FLOW INTELLIGENCE</div>
+      </div>
+      <button class="modal-x" onclick="closeM('about')">×</button>
+    </div>
+    <div class="modal-body"><b>SteelLoadings</b> gives steel market players early visibility into physical spot market flows — before they show up in port lineups or trade statistics.<br><br>
+We capture shipment orders at the moment they enter the market, typically <b>2–4 weeks before vessel loading</b>. Each signal shows the origin port, destination, volume and loading window — enriched with the likely producer and cargo type, determined through a combination of <b>proprietary algorithms and expert market knowledge</b>.<br><br>
+<b>Commodities covered:</b><br>
+Billets · Rebars · Wire rod · Beam · Sections · Rails · HRC · CRC · HDG · Plate · Slabs · Tubes<br><br>
+<b>Built for market players who need to act early:</b><br>
+→ See where steel is moving before it moves<br>
+→ Identify supply pressure building on key trade routes<br>
+→ Know which mills are actively shipping and where<br><br>
+<i>SteelLoadings doesn't tell you what happened last month. It tells you what the spot market is doing right now.</i></div>
+    <div class="modal-foot"><button class="mbtn sec" onclick="closeM('about')">Close</button></div>
+  </div>
+</div>
+
+<div class="modal-ov" id="m-brief" onclick="if(event.target===this)closeM('brief')">
+  <div class="modal-box" style="max-width:680px">
+    <div class="modal-hdr">
+      <div class="modal-title">New Loading Brief</div>
+      <button class="modal-x" onclick="closeM('brief')">×</button>
+    </div>
+    <div class="modal-body" id="brief-body"><div style="text-align:center;padding:30px;color:var(--muted)">Generating...</div></div>
+    <div class="modal-foot">
+      <button class="mbtn primary" onclick="pdfBrief()">↓ PDF</button>
+      <button class="mbtn blue" onclick="xlsBrief()">↓ Excel</button>
+      <button class="mbtn sec" onclick="closeM('brief')">Close</button>
+    </div>
+  </div>
+</div>
+<div id="parea"></div>
+<div id="info-panel" class="info-panel" style="display:none;width:300px;min-width:300px;flex-shrink:0;flex-direction:column;overflow-y:auto;border-left:2px solid var(--border);background:var(--bg1)">
+  <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+    <div id="ip-title" style="font-size:13px;font-weight:600;color:var(--text)">Info</div>
+    <button onclick="closeInfo()" style="background:none;border:none;font-size:18px;color:var(--muted);cursor:pointer">×</button>
+  </div>
+  <div id="ip-body" style="padding:12px 14px;flex:1;overflow-y:auto;font-size:12px;line-height:1.6;color:var(--text)"></div>
+</div>
+<script>
+const CARGO_CAP_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vSvjt6azNXcop4sIs0wRU5uQAKTaNycidVvMZLrSoavC7OSaNgHlhyPWN6C9UBB6g/pub?gid=59424299&single=true&output=csv';
+const ORDERS_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vSvjt6azNXcop4sIs0wRU5uQAKTaNycidVvMZLrSoavC7OSaNgHlhyPWN6C9UBB6g/pub?gid=162931582&single=true&output=csv';
+const MILLS_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vSvjt6azNXcop4sIs0wRU5uQAKTaNycidVvMZLrSoavC7OSaNgHlhyPWN6C9UBB6g/pub?gid=1310795114&single=true&output=csv';
+let CAPACITY_DB={};
+let MILLS_DB={"ara": {"m": ["ArcelorMittal", "Tata Steel", "ThyssenKrupp Steel"], "c": "Low"}, "acajutla": {"m": ["CORINCA"], "c": "High"}, "alexandria": {"m": ["Al Ezz Dekheila (EZDK)"], "c": "High"}, "algeciras": {"m": ["ArcelorMittal (transit hub)"], "c": "High"}, "algeria": {"m": ["El Hadjar", "Tosyali "], "c": "Medium"}, "aliaga-nemrut": {"m": ["Ege Celik", "IDC Izdemir", "Ozkan DC", "Habas"], "c": "Low"}, "amsterdam": {"m": ["ArcelorMittal", "Tata Steel", "ThyssenKrupp Steel"], "c": "Low"}, "annaba": {"m": ["ArcelorMittal Annaba"], "c": "High"}, "antwerpen": {"m": ["ArcelorMittal", "Tata Steel", "ThyssenKrupp Steel"], "c": "Low"}, "aveiro": {"m": ["–"], "c": "–"}, "aviles": {"m": ["ArcelorMittal Asturias"], "c": "High"}, "azov-rostov": {"m": ["Taganrog Steel (TMK)"], "c": "High"}, "bahudopi": {"m": ["JSPL Angul"], "c": "High"}, "bandar abbas": {"m": ["Mobarakeh Steel"], "c": "High"}, "barranquilla": {"m": ["Gerdau Diaco", "ACESO (Acesco)"], "c": "Medium"}, "bartin": {"m": ["Mescier"], "c": "High"}, "batumi": {"m": ["–"], "c": "–"}, "bayuquan": {"m": ["Ansteel"], "c": "High"}, "bilbao": {"m": ["ArcelorMittal Sestao"], "c": "High"}, "birkenhead": {"m": ["–"], "c": "–"}, "boston": {"m": ["–"], "c": "–"}, "braila": {"m": ["Lamino Brăila"], "c": "High"}, "bremen": {"m": ["ArcelorMittal Bremen"], "c": "High"}, "brisbaine": {"m": ["–"], "c": "–"}, "buenaventura": {"m": ["–"], "c": "–"}, "burgas": {"m": ["Promet (Metinvest)"], "c": "High"}, "busan": {"m": ["POSCO", "Hyundai Steel"], "c": "Medium"}, "cape town": {"m": ["Scaw Metals (South Africa)"], "c": "High"}, "casablanca": {"m": ["Sonasid (ArcelorMittal)"], "c": "High"}, "catania": {"m": ["Acciaierie di Sicilia"], "c": "High"}, "chalkis": {"m": ["Hellenic Halyvourgia"], "c": "High"}, "chernomorsk": {"m": ["Metinvest", "ArcelorMittal(Krivoy Rig)"], "c": "Medium"}, "chioggia": {"m": ["Acciaierie Venete"], "c": "High"}, "civitavecchia": {"m": ["Arvedi"], "c": "High"}, "constanta": {"m": ["Liberty Galati", "HBIS Serbia"], "c": "Medium"}, "damietta": {"m": ["Beshay Steel"], "c": "High"}, "dammam": {"m": ["Al Ittefaq Steel Products Company"], "c": "High"}, "dar es salam": {"m": ["–"], "c": "–"}, "diliskelesi": {"m": ["Colakoglu Metalurji"], "c": "High"}, "djen-djen": {"m": ["Algerian-Qatari Steel"], "c": "High"}, "djibouti": {"m": ["Djibouti Steel Factory"], "c": "–"}, "dunkirk": {"m": ["ArcelorMittal Dunkerque"], "c": "High"}, "durban": {"m": ["Scaw Metals", "Cape Gate"], "c": "Medium"}, "eleusis": {"m": ["Halyvourgiki"], "c": "High"}, "eregli": {"m": ["Erdemir"], "c": "High"}, "fairless hills": {"m": ["US Steel"], "c": "High"}, "fangcheng": {"m": ["Guangxi Shenglong"], "c": "High"}, "fos": {"m": ["ArcelorMittal Fos-sur-Mer"], "c": "High"}, "fredericia": {"m": ["–"], "c": "–"}, "fredrikstad": {"m": ["–"], "c": "–"}, "fujairah": {"m": ["Fujairah Steel Industries"], "c": "High–"}, "galatz": {"m": ["Liberty Galati"], "c": "High"}, "gdansk": {"m": ["–"], "c": "–"}, "gebze": {"m": ["Colakoglu Metalurji"], "c": "High"}, "gemlik": {"m": ["Borcelik"], "c": "High"}, "genoa": {"m": ["Acciaierie d'Italia"], "c": "High"}, "ghent": {"m": ["ArcelorMittal Ghent"], "c": "High"}, "gijon": {"m": ["ArcelorMittal Asturias"], "c": "High"}, "giurgiulesti": {"m": ["–"], "c": "–"}, "greenore": {"m": ["–"], "c": "–"}, "haifa": {"m": ["Israsteel"], "c": "High"}, "haldia": {"m": ["Tata Steel"], "c": "High"}, "hamilton": {"m": ["Stelco (Hamilton Works)", "ArcelorMittal Dofasco"], "c": "Medium"}, "hazira": {"m": ["Essar", "ArcelorMittal Nippon"], "c": "High"}, "hereke": {"m": ["Kroman Celik"], "c": "High"}, "horsens": {"m": ["–"], "c": "–"}, "houston": {"m": ["Commercial Metals Company (CMC)", "JSW Steel USA"], "c": "Medium"}, "icdas-biga": {"m": ["ICDAS Celik"], "c": "High"}, "immingham": {"m": ["British steel"], "c": "–"}, "incheon": {"m": ["POSCO", "Hyundai Steel"], "c": "Medium"}, "isdas": {"m": ["ICDAS Celik"], "c": "High"}, "isdemir": {"m": ["Isdemir (Oyak)"], "c": "High"}, "iskenderun": {"m": ["Tosyali", "Yazici", "Isdemir", "MMK Metalurji"], "c": "Low"}, "jebel ali": {"m": ["EM Steel"], "c": "High"}, "jeddah": {"m": ["Hadeed (SABIC)"], "c": "High"}, "jizan": {"m": ["Hadeed (SABIC)"], "c": "High"}, "johor": {"m": ["Southern Steel", "Ann Joo"], "c": "Medium"}, "kandla": {"m": ["Gujarat NRE"], "c": "High"}, "kaohsiung": {"m": ["China Steel Corp (CSC)"], "c": "High"}, "klaipeda": {"m": ["–"], "c": "–"}, "kolding": {"m": ["–"], "c": "–"}, "kuantan": {"m": ["Malaysia Steel Works"], "c": "High"}, "lianyungang": {"m": ["Shagang Group"], "c": "High"}, "los angeles": {"m": ["Gerdau Long Steel North America"], "c": "High"}, "marghera": {"m": ["Arvedi"], "c": "High"}, "masan": {"m": ["Hyundai Steel", "SeAH Steel"], "c": "Medium"}, "massawa": {"m": ["–"], "c": "–"}, "mersin": {"m": ["Atakas Steel", "Metas"], "c": "Medium"}, "misrata": {"m": ["Libyan Iron & Steel (LISCO)"], "c": "High"}, "mobil": {"m": ["AM", "NS Calvert"], "c": "High"}, "moerdijk": {"m": ["Nedri Spanstaal"], "c": "High"}, "monfalcone": {"m": ["Ferriera Valsider"], "c": "High"}, "mumbai": {"m": ["JSW Steel (Dolvi)"], "c": "High"}, "mundra": {"m": ["Adani Steel"], "c": "High"}, "muuga": {"m": ["–"], "c": "–"}, "nakhodka": {"m": ["Mechel", "EVRAZ"], "c": "Medium"}, "nemrut": {"m": ["Ege Celik", "IDC Izdemir", "Ozkan DC", "Habas"], "c": "Low"}, "newport": {"m": ["Tata Steel"], "c": "High"}, "nhava sheva": {"m": ["JSW Steel"], "c": "High"}, "northfleet": {"m": ["–"], "c": "–"}, "nouakchott": {"m": ["–"], "c": "–"}, "novorossiysk": {"m": ["NLMK", "Mechel", "Severstal"], "c": "Low"}, "odessa": {"m": ["Metinvest", "ArcelorMittal(Krivoy Rig)"], "c": "Medium"}, "onne": {"m": ["–"], "c": "–"}, "paradip": {"m": ["JSPL (Jindal Steel)"], "c": "High"}, "pasajes": {"m": ["ArcelorMittal"], "c": "High"}, "phu my": {"m": ["Pomina Steel", "Hoa Phat"], "c": "Medium"}, "piombino": {"m": ["Aferpi", "Jsw Italy"], "c": "High"}, "pisco or paracas": {"m": ["Aceros Arequipa"], "c": "High"}, "port klang": {"m": ["Masteel", "Lion Steel"], "c": "Medium"}, "porto nogaro": {"m": ["ABS Steel"], "c": "High"}, "praia mole": {"m": ["ArcelorMittal Tubarao"], "c": "High"}, "pyeongtaek": {"m": ["Hyundai Steel"], "c": "High"}, "ravenna": {"m": ["Ferriere Nord", "Alfa Acciai", "Ori Martin", "Feralpi"], "c": "Low"}, "rotterdam": {"m": ["ArcelorMittal", "Tata Steel", "ThyssenKrupp Steel"], "c": "Low"}, "salerno": {"m": ["–"], "c": "–"}, "samsun": {"m": ["Yesilyurt"], "c": "High"}, "san ciprian": {"m": ["ArcelorMittal Galicia"], "c": "High"}, "setubal": {"m": ["Siderurgia Nacional"], "c": "High"}, "seville": {"m": ["ArcelorMittal Sevilla"], "c": "High"}, "shanghai": {"m": ["Baosteel", "Baowu", "Shagang"], "c": "Medium"}, "sheerness": {"m": ["–"], "c": "–"}, "skikda": {"m": ["Sider El-Hadjar (ArcelorMittal)"], "c": "High"}, "sohar": {"m": ["Jindal Shadeed Iron & Steel"], "c": "High"}, "st-petersburg": {"m": ["Severstal"], "c": "High"}, "taicang": {"m": ["Shagang Group"], "c": "High"}, "tanga": {"m": ["–"], "c": "–"}, "tanjung perak": {"m": ["Krakatau Steel"], "c": "High"}, "tarragina": {"m": ["ArcelorMittal Tarragona"], "c": "High"}, "tarragona": {"m": ["Celsa"], "c": "–"}, "tartous": {"m": ["–"], "c": "–"}, "tartous or latakia": {"m": ["–"], "c": "–"}, "thessaloniki": {"m": ["Sidenor"], "c": "High"}, "tianjin": {"m": ["TISCO", "TPCO (pipes)"], "c": "Medium"}, "tuapse": {"m": ["NLMK", "Mechel", "Severstal"], "c": "Low"}, "umm qast": {"m": ["Rajhi Steel"], "c": "High"}, "valparaiso": {"m": ["–"], "c": "–"}, "vancouver": {"m": ["Delta Steel"], "c": "High"}, "varna": {"m": ["Promet (Metinvest)"], "c": "High"}, "visakhapatnam": {"m": ["RINL (Vizag Steel)"], "c": "High"}, "xiamen": {"m": ["Fujian Wuhang Steel"], "c": "High"}, "yanbu": {"m": ["Yamamah Steel Plant"], "c": "High"}, "zhangjiagang": {"m": ["Shagang Group"], "c": "High"}, "yuzhny": {"m": ["Metinvest", "ArcelorMittal(Krivoy Rig)"], "c": "Medium"}};
+let RAW=[["rebars", 3600, "Diliskelesi", "Turkey", "", "", "Constanta", "Romania", 46164, 46169, "", false], ["rebars", 9220, "Pisco", "Peru", "", "", "Buenaventura", "Colombia", 46171, 46177, "", false], ["rebars", 10100, "Diliskelesi", "Turkey", "", "", "Muuga", "Estonia", 46171, 46175, "", false], ["wire mesh", 4800, "Iskenderun", "Turkey", "", "", "Newport", "UK", 46172, 46178, "", false], ["rebars", 5000, "Diliskelesi", "Turkey", "", "", "Braila", "Romania", 46167, 46168, "", false], ["tubes", 3000, "Busan", "South Korea", "", "", "Alexandria", "Egypt", 46266, 46326, "", false], ["HRC", 1600, "St-Petersburg", "Russia", "", "", "Fujairah", "UAE", 46156, 46170, "", false], ["rebars", 6000, "Alexandria", "Egypt", "", "", "Thessaloniki", "Greece", 46174, 46178, "", false], ["wire rod", 500, "Alexandria", "Egypt", "", "", "Thessaloniki", "Greece", 46174, 46178, "", false], ["coils", 2400, "Algeciras", "Spain", "Rotterdam", "Netherland", "Immingham", "UK", 46163, 46177, "", false], ["coils", 2100, "Kaohsiung", "Taiwan", "", "", "Eleusis", "Greece", 46156, 46170, "", false], ["CRC", 3000, "Johor", "Malaysia", "", "", "Incheon", "South Korea", 46156, 46170, "", false], ["steel product", 10000, "Tanjung Perak", "Indonesia", "", "", "Brisbaine", "Australia", 46188, 46193, "", false], ["HRC", 43000, "St-Petersburg", "Russia", "", "", "Fujairah", "UAE", 46188, 46198, "", false], ["bars", 4000, "Mersin", "Turkey", "", "", "Massawa", "Eritrea", 46183, 46197, "", false], ["coils", 2900, "Bremen", "Germany", "", "", "Immingham", "UK", 46163, 46177, "", false], ["steel product", 3500, "Gebze", "Turkey", "", "", "Constanta", "Romania", 46157, 46171, "", false], ["HDG", 3000, "Annaba", "Algeria", "", "", "Tartous or Latakia", "Syria", 46179, 46182, "", false], ["rebars", 3000, "Bourgas", "Bulgaria", "", "", "Catania", "Italy", 46168, 46170, "", false], ["coils", 2000, "Tianjin", "China", "", "", "Mersin", "Turkey", 46157, 46171, "", false], ["rails", 875, "Gijon", "Spain", "", "", "Jeddah", "Saudi  Arabia", 46189, 46203, "", false], ["rebars", 4200, "Novorossiysk", "Russia", "", "", "Alexandria", "Egypt", 46168, 46178, "", false], ["tubes", 2400, "Mumbai", "India", "", "", "Los Angeles", "USA", 46188, 46198, "", false], ["coils", 8463, "Shanghai", "China", "", "", "Novorossiysk", "Russia", 46164, 46168, "", false], ["rebars", 5000, "Diliskelesi", "Turkey", "", "", "ARA", "Netherland,Belgium", 46178, 46183, "", false], ["steel product", 8500, "Taicang", "china", "", "", "Novorossiysk", "Russia", 46164, 46172, "", false], ["coils", 2000, "Tianjin", "China", "", "", "Mersin", "Turkey", 46188, 46203, "", false], ["HDG", 1500, "Xiamen", "China", "", "", "Mersin", "Turkey", 46157, 46172, "", false], ["tubes", 1700, "Masan", "South Korea", "", "", "Algeria", "Algeria", 46157, 46173, "", false], ["tubes", 7941, "Shanghai", "China", "", "", "Jeddah", "Saudi  Arabia", 46163, 46173, "", false], ["coils", 9920, "Jeddah", "Saudi  Arabia", "", "", "Jebel ali", "UAE", 46158, 46172, "", false], ["billet", 20000, "Nakhodka", "Russia", "", "", "Kaohsiung", "Taiwan", 46168, 46170, "", false], ["plate", 10452, "Shanghai", "China", "", "", "Fujairah", "UAE", 46174, 46180, "", false], ["rails", 152, "Gijon", "Spain", "", "", "Hamilton", "Canada", 46191, 46195, "", false], ["debar", 5000, "Monfalcone", "Italy", "", "", "Constanta", "Romania", 46160, 46170, "", false], ["steel product", 20000, "Zhangjiagang", "China", "", "", "Chernomorsk or Yuzhny", "Ukraine", 46163, 46187, "", false], ["steel product", 6000, "Diliskelesi", "Turkey", "", "", "ARA", "Netherland,Belgium", 46174, 46180, "", false], ["coils", 1200, "Fos", "France", "", "", "Setubal", "Portugal", 46160, 46174, "", false], ["rails", 2992, "Gijon", "Spain", "", "", "Sohar", "Oman", 46167, 46181, "", false], ["coils", 4000, "Civitavecchia", "Italy", "", "", "Constanta", "Romania", 46172, 46174, "", false], ["coils", 1000, "Port Klang", "Malaysia", "", "", "Bilbao", "Spain", 46204, 46234, "", false], ["steel product", 9000, "Port Klang", "Malaysia", "", "", "Diliskelesi", "Turkey", 46188, 46195, "", false], ["coils", 3000, "odessa", "Ukraine", "", "", "Porto Nogaro", "Italy", 46169, 46171, "", false], ["bars", 3000, "Porto Nogaro", "Italy", "", "", "Braila", "Romania", 46185, 46188, "", false], ["slabs", 3500, "San Ciprian", "Spain", "", "", "Chalkis", "Greece", 46303, 46183, "", false], ["steel product", 5700, "Iskenderun", "Turkey", "", "", "Casablanca", "Morocco", 46163, 46177, "", false], ["steel product", 5200, "Iskenderun", "Turkey", "", "", "Galatz", "Romania", 46160, 46174, "", false], ["wire rod", 4446, "Praia Mole", "Brazil", "", "", "Barranquilla", "Colombia", 46164, 46169, "", false], ["rebars", 2000, "Praia Mole", "Brazil", "", "", "Barranquilla", "Colombia", 46164, 46169, "", false], ["steel product", 10000, "Incheon", "South Korea", "", "", "Barranquilla", "Colombia", 46223, 46244, "", false], ["billet", 30000, "Lianyungang", "China", "", "", "Tanjung Perak", "Indonesia", 46161, 46168, "", false], ["tubes", 1700, "Dunkirk", "France", "", "", "Yanbu", "China", 46198, 46208, "", false], ["billet", 50000, "Bayuquan", "China", "", "", "Aliaga", "Turkey", 46213, 46234, "", false], ["rebars", 10000, "Fairless Hills", "USA", "", "", "Houston", "USA", 46244, 46254, "", false], ["rebars", 10000, "Masan", "South Korea", "", "", "Houston", "USA", 46235, 46244, "", false], ["beam", 3700, "Shanghai", "China", "", "", "Fujairah", "UAE", 46184, 46193, "", false], ["profiles", 2950, "Seville", "Spain", "", "", "Fredrikstad", "Norway", 46169, 46170, "", false], ["coils", 7800, "Bremen", "Germany", "", "", "Pasajes", "Spain", 46168, 46182, "", false], ["billet", 10000, "odessa", "Ukraine", "", "", "Bourgas", "Bulgaria", 46168, 46182, "", false], ["rebars", 20000, "Hereke", "Turkey", "", "", "Djibouti", "Djibouti", 46161, 46175, "", false], ["slabs", 5000, "Ghent", "Belgium", "", "", "Aviles", "Spain", 46162, 46176, "", false], ["coils", 10000, "Mumbai", "India", "", "", "Antwerpen", "Belgium", 46161, 46168, "", false], ["coils", 4500, "Johor", "Malaysia", "", "", "Mumbai", "India", 46170, 46184, "", false], ["rebars", 5000, "Chioggia", "Italy", "", "", "Galatz", "Romania", 46169, 46172, "", false], ["debar", 5000, "Catania", "Italy", "", "", "Galatz", "Romania", 46171, 46185, "", false], ["coils", 5050, "Iskenderun", "Turkey", "", "", "Newport", "UK", 46171, 46178, "", false], ["wire mesh", 1000, "Hereke", "Turkey", "", "", "Greenore", "Ireland", 46171, 46180, "", false], ["wire mesh", 650, "Hereke", "Turkey", "", "", "Northfleet", "UK", 46171, 46180, "", false], ["sheet", 3000, "Isdemir", "Turkey", "", "", "Eregli", "Turkey", 46162, 46169, "", false], ["steel product", 15000, "Tianjin", "China", "", "", "Haifa", "Israel", 46162, 46169, "", false], ["steel product", 17200, "Bahudopi", "Indonesia", "", "", "Diliskelesi", "Turkey", 46162, 46176, "", false], ["slabs", 30000, "Fangcheng", "China", "", "", "Gdansk", "Poland", 46162, 46176, "", false], ["steel product", 43000, "Bahudopi", "Indonesia", "", "", "Antwerpen", "Belgium", 46162, 46176, "", false], ["billet", 12000, "Cape Town", "SAR", "", "", "Dar Es Salam", "Tanzania", 46167, 46172, "", false], ["steel product", 2400, "Algeciras", "Spain", "", "", "Constanta", "Romania", 46162, 46176, "", false], ["steel product", 2100, "Casablanca", "Morocco", "", "", "Diliskelesi", "Turkey", 46169, 46176, "", false], ["tubes", 5000, "Gemlik", "Turkey", "", "", "Antwerpen", "Belgium", 46177, 46179, "", false], ["rebars", 7000, "Skikda", "Algeria", "", "", "Klaipeda", "Lithuania", 46174, 46188, "", false], ["coils", 2500, "Dunkirk", "France", "", "", "Boston", "USA", 46164, 46179, "", false], ["rebars", 12000, "Iskenderun", "Turkey", "", "", "Ghent", "Belgium", 46179, 46182, "", false], ["rebars", 8000, "Masan", "South Korea", "", "", "Valparaiso", "Chile", 46188, 46193, "", false], ["HRC", 7800, "Nemrut", "Turkey", "", "", "Bilbao", "Spain", 46162, 46176, "", false], ["HRC", 6075, "Nemrut", "Turkey", "", "", "Birkenhead", "UK", 46162, 46176, "", false], ["HRC", 2300, "Nemrut", "Turkey", "", "", "Catania", "Italy", 46162, 46176, "", false], ["HRC", 4175, "Nemrut", "Turkey", "", "", "Constanta", "Romania", 46162, 46176, "", false], ["CRC", 4300, "Tianjin", "China", "", "", "Buenaventura", "Colombia", 46163, 46178, "", false], ["steel product", 8000, "Jizan", "Saudi  Arabia", "", "", "Diliskelesi", "Turkey", 46174, 46203, "", false], ["coils", 4450, "Ghent", "Belgium", "", "", "Burgas", "Bulgaria", 46170, 46171, "", false], ["steel product", 5000, "Novorossiysk", "Russia", "", "", "Haifa", "Israel", 46174, 46188, "", false], ["coils", 2500, "Ghent", "Belgium", "", "", "Setubal", "Portugal", 46168, 46169, "", false], ["coils", 1420, "Iskenderun", "Turkey", "", "", "Misrata", "Libya", 46162, 46144, "", false], ["rebars", 12000, "Iskenderun", "Turkey", "", "", "Ghent", "Belgium", 46170, 46171, "", false], ["steel product", 30000, "Zhangjiagang", "China", "", "", "Jeddah", "Saudi  Arabia", 46163, 46183, "", false], ["coils", 8000, "Phu My", "Vietnam", "", "", "Tanjung Perak", "Indonesia", 46174, 46203, "", false], ["rails", 7000, "Gijon", "Spain", "", "", "Sohar", "Oman", 46195, 46200, "", false], ["profiles", 3600, "Tarragina", "Spain", "", "", "Horsens", "Denmark", 46177, 46178, "", false], ["sheet", 20000, "Isdemir", "Turkey", "", "", "Antwerpen", "Belgium", 46194, 46201, "", false], ["steel product", 8000, "Dunkirk", "France", "", "", "Eleusis", "Greece", 46174, 46176, "", false], ["coils", 7550, "Dunkirk", "France", "", "", "Ghent", "Belgium", 46163, 46170, "", false], ["coils", 3400, "Odessa", "Ukraine", "", "", "Thessaloniki", "Greece", 46169, 46170, "", false], ["steel product", 10000, "Aliaga", "Turkey", "", "", "ARA", "Netherland,Belgium", 46176, 46179, "", false], ["CRC", 2890, "Ghent", "Belgium", "Djen-Djen", "Algeria", "Piombino", "Italy", 46168, 46182, "", false], ["coils", 2550, "Ghent", "Belgium", "", "", "Aveiro", "Portugal", 46169, 46170, "", false], ["rebars", 15000, "Iskenderun", "Turkey", "", "", "Ghent", "Belgium", 46179, 46182, "", false], ["coils", 3700, "Iskenderun", "Turkey", "", "", "Odessa", "Ukraine", 46174, 46178, "", false], ["sheet", 2000, "Iskenderun", "Turkey", "", "", "Odessa", "Ukraine", 46169, 46173, "", false], ["coils", 4400, "Gebze", "Turkey", "", "", "Odessa", "Ukraine", 46174, 46178, "", false], ["HDG", 10000, "Hazira", "India", "", "", "Houston", "USA", 46194, 46203, "", false], ["sheet", 1506, "Pyeongtaek", "South Korea", "", "", "Acajutla", "El salvador", 46163, 46188, "", false], ["rebars", 10000, "Alexandria", "Egypt", "", "", "Klaipeda", "Lithuania", 46189, 46203, "", false], ["steel product", 15900, "Iskenderun", "Turkey", "", "", "Tarragona", "Spain", 46177, 46183, "", false], ["plate", 1970, "Gijon", "Spain", "", "", "Fredericia", "Denmark", 46170, 46171, "", false], ["steel product", 5200, "Diliskelesi", "Turkey", "", "", "Rotterdam", "Netherland", 46175, 46178, "", false], ["steel product", 3000, "Shanghai", "China", "", "", "Ravenna", "Italy", 46168, 46182, "", false], ["CRC", 3200, "Dunkirk", "France", "", "", "Kolding", "Denmark", 46164, 46178, "", false], ["coils", 2500, "Algeciras", "Spain", "", "", "Gdansk", "Poland", 46164, 46178, "", false], ["rebars", 5000, "Diliskelesi", "Turkey", "", "", "Batumi", "Georgia", 46174, 46178, "", false], ["rails", 5000, "Piombino", "Italy", "", "", "Sohar", "Oman", 46164, 46171, "", false], ["coils", 1600, "St-Petersburg", "Russia", "", "", "Fujairah", "UAE", 46188, 46203, "", false], ["slabs", 50000, "Paradip", "India", "", "", "Amsterdam", "Netherland", 46188, 46190, "", false], ["billet", 30000, "Visakhapatnam", "India", "", "", "Fujairah", "UAE", 46164, 46178, "", false], ["steel product", 84000, "St-Petersburg", "Russia", "", "", "Fujairah", "UAE", 46188, 46198, "", false], ["steel product", 2000, "Bartin", "Turkey", "", "", "Salerno", "Italy", 46192, 46207, "", false], ["slabs", 45000, "Praia Mole", "Brazil", "", "", "Mobil", "USA", 46180, 46183, "", false], ["bars", 3000, "Bandar Abbas", "Iran", "", "", "Tanga", "Tanzania", 46167, 46177, "", false], ["coils", 8835, "Ravenna", "Italy", "", "", "Constanta", "Romania", 46172, 46175, "", false], ["steel product", 24000, "St-Petersburg", "Russia", "Tartous", "Syria", "Iskenderun", "Turkey", 46198, 46203, "", false], ["tubes", 9000, "Mundra", "India", "", "", "Vancouver", "Canada", 46208, 46213, "", false], ["coils", 5000, "odessa", "Ukraine", "", "", "Porto Nogaro", "Italy", 46174, 46203, "", false], ["rebars", 10000, "Busan", "South Korea", "", "", "Houston", "USA", 46174, 46183, "", false], ["rebars", 3000, "Iskenderun", "Turkey", "", "", "Giurgiulesti", "Moldova", 46183, 46188, "", false], ["steel product", 30000, "Bahudopi", "Indonesia", "", "", "Paradip", "India", 46180, 46183, "", false], ["steel product", 12830, "St-Petersburg", "Russia", "", "", "Haifa", "Israel", 46188, 46198, "", false], ["tubes", 2300, "Kuantan", "Malaysia", "", "", "Onne", "Nigeria", 46167, 46179, "", false], ["billet", 5000, "Umm Qast", "Iraq", "", "", "Dammam", "Saudi  Arabia", 46167, 46181, "", false], ["tubes", 3000, "Odessa", "Ukraine", "", "", "Varna", "Bulgaria", 46176, 46178, "", false], ["coils", 2000, "Genoa", "Italy", "", "", "Setubal", "Portugal", 46167, 46179, "", false], ["billet", 10000, "Kandla", "India", "", "", "Dar Es Salam", "Tanzania", 46188, 46193, "", false], ["rebars", 31149, "Paradip", "India", "Antwerpen", "Belgium", "Muuga", "Estonia", 46168, 46175, "", false], ["coils", 2500, "Bremen", "Germany", "", "", "Aveiro", "Portugal", 46171, 46185, "", false], ["debar", 10000, "Isdas", "Turkey", "", "", "Constanta", "Romania", 46168, 46182, "", false], ["steel product", 5000, "Tanjung Perak", "Indonesia", "", "", "Marghera", "Italy", 46193, 46198, "", false], ["steel product", 4200, "Hereke", "Turkey", "", "", "Sheerness", "UK", 46174, 46189, "", false], ["steel product", 30000, "Tianjin", "China", "", "", "Odessa", "Ukraine", 46174, 46183, "", false], ["coils", 4200, "Durban", "SAR", "", "", "Damietta", "Egypt", 46193, 46198, "", false], ["billet", 4000, "Haldia", "India", "", "", "Djibouti", "Djibouti", 46168, 46178, "", false], ["coils", 2200, "Bilbao", "Spain", "Ghent", "Belgium", "Moerdijk", "Netherland", 46169, 46183, "", false], ["slabs", 40000, "Praia Mole", "Brazil", "", "", "Gdansk", "Poland", 46182, 46185, "", false], ["debar", 6500, "Alexandria", "Egypt", "", "", "Nouakchott", "Mauritania", 46193, 46203, "", false], ["rebars", 2000, "Icdas", "Turkey", "", "", "Reykjavik", "Iceland", 46174, 46178, "", false], ["coils", 3850, "Dunkirk", "France", "", "", "Tanjier", "Morocco", 46170, 46174, "", false], ["coils", 3600, "Ghent", "Belgium", "", "", "Halmstad", "Sweden", 46176, 46177, "", false], ["coils", 3500, "Ghent", "Belgium", "", "", "Pasajes", "Spain", 46170, 46177, "", false], ["plate", 1400, "Gijon", "Spain", "", "", "Aveiro", "Portugal", 46175, 46176, "", false], ["coils", 500, "Gijon", "Spain", "", "", "Aveiro", "Portugal", 46189, 46176, "", false], ["steel product", 8000, "Marghera", "Italy", "", "", "New Orlean", "USA", 46170, 46184, "tubes?", false], ["tubes", 890, "Odessa", "Ukraine", "", "", "Alexandria", "Egypt", 46178, 46180, "", false], ["steel product", 3000, "Bayonne", "France", "", "", "Pointe des Galets", "Reunion", 46208, 46215, "", false], ["coils", 4080, "Dunkirk", "France", "Sagunto", "Spain", "Catania", "Italy", 46175, 46189, "", false], ["tubes", 7000, "Marghera", "Italy", "", "", "Poti", "Georgia", 46186, 46191, "", false], ["tubes", 7000, "Varna", "Bulgaria", "", "", "Houston", "USA", 46186, 46188, "", false], ["tubes", 1760, "Ravenna", "Italy", "", "", "Vigra Fugleneset Mol", "Norway", 46181, 46188, "", false], ["slabs", 40000, "Praia Mole", "Brazil", "", "", "Dunkirk", "France", 46186, 46189, "", true], ["tubes", 15000, "Mundra", "India", "", "", "Damietta", "Egypt", 46218, 46228, "", true], ["steel product", 21000, "Zhangjiagang", "China", "", "", "Chernomorsk or Yuzhny", "Ukraine", 46181, 46195, "", true], ["billet", 30000, "Visakhapatnam", "India", "", "", "Fujairah", "UAE", 46171, 46185, "", true], ["coils", 2000, "Dunkirk", "France", "", "", "Belfast", "UK", 46177, 46191, "", true], ["coils", 4200, "Bremen", "Germany", "", "", "Immingham", "UK", 46177, 46191, "", true], ["steel product", 1250, "Alexandria", "Egypt", "", "", "Ortona", "Italy", 46176, 46190, "", true], ["rebars", 4250, "Diliskelesi", "Turkey", "", "", "Constanta", "Romania", 46183, 46185, "", true], ["rails", 2250, "Gangavaram", "India", "", "", "Bejaia", "Algeria", 46266, 46295, "", true], ["steel product", 5595, "Tianjin", "China", "", "", "Alexandria", "Egypt", 46171, 46178, "", true], ["CRC", 3500, "Phu My", "Vietnam", "", "", "Chennai", "India", 46171, 46188, "", true], ["rebars", 5571, "Pisco", "Peru", "", "", "Huachipato", "Chile", 46190, 46196, "", true]];
+const B=new Date(1899,11,30).getTime();
+function exd(n){return new Date(B+n*86400000);}
+function fmt(n){return exd(n).toLocaleDateString('en',{day:'2-digit',month:'short'});}
+const LT=['rebar','rebars','bar','bars','wire rod','wire mesh','rails','beam','profiles','debar'];
+const FT=['CRC','HDG','plate','sheet','slabs'];
+function cat(c){const l=c.toLowerCase();if(l==='billet'||l==='billets')return'billet';if(l==='scrap')return'scrap';if(LT.some(t=>l===t.toLowerCase()))return'long';if(['hrc','coils'].some(t=>l===t.toLowerCase()))return'hrc';if(FT.some(t=>l===t.toLowerCase()))return'flat';if(l.includes('tube'))return'semi';return'other';}
+const CC={long:'#5040a0',flat:'var(--green)',hrc:'var(--blue)',billet:'#c06010',scrap:'#7a5030',semi:'var(--gold)',other:'var(--muted)'};
+const CN={long:'Long',flat:'Flat',hrc:'HRC / Coils',billet:'Billet',scrap:'Scrap',semi:'Tubes',other:'Other'};
+
+
+
+function gm(pol){const p=pol.toLowerCase().trim();const E=Object.entries(MILLS_DB);for(const[k,v] of E){if(p===k)return v;}const tk=s=>s.split(/[\s\-\/,]+/).filter(w=>w.length>=5);const pt=tk(p);if(pt.length){for(const[k,v] of E){if(tk(k).some(w=>pt.includes(w)))return v;}}return null;}
+
+const ISO={'Turkey':'TUR','Russia':'RUS','China':'CHN','India':'IND','Brazil':'BRA','Ukraine':'UKR','Romania':'ROM','Estonia':'EST','UK':'GBR','Morocco':'MAR','Netherlands':'NLD','Belgium':'BEL','Italy':'ITA','France':'FRA','Egypt':'EGY','UAE':'UAE','Saudi Arabia':'SAU','Oman':'OMN','Algeria':'DZA','Greece':'GRC','Bulgaria':'BGR','Germany':'DEU','Spain':'ESP','Poland':'POL','South Korea':'KOR','Taiwan':'TWN','Japan':'JPN','Vietnam':'VNM','Indonesia':'IDN','Colombia':'COL','Peru':'PER','Chile':'CHL','USA':'USA','Canada':'CAN','Djibouti':'DJI','Kazakhstan':'KAZ','Georgia':'GEO','Malaysia':'MYS','Thailand':'THA','Singapore':'SGP','Australia':'AUS','Argentina':'ARG','Mexico':'MEX','Nigeria':'NGA','South Africa':'ZAF','Algeria':'DZA','Tunisia':'TUN','Libya':'LBY','Serbia':'SRB','Philippines':'PHL'};
+function iso(c){return ISO[c]||c.slice(0,3).toUpperCase();}
+
+const POD_TYPES={"ARA":"mixed","Alexandria":"long","Antwerpen":"flat","Bayuquan":"long","Bejaia":"long","Bremen":"flat","Casablanca":"long","Chennai":"flat","Constanta":"mixed","Damietta":"long","Diliskelesi":"mixed","Dunkirk":"flat","Fujairah":"mixed","Gdansk":"flat","Ghent":"flat","Hereke":"long","Houston":"flat","Immingham":"mixed","Iskenderun":"mixed","Jeddah":"long","Mobil":"flat","Muuga":"long","Newport":"long","Novorossiysk":"mixed","Ortona":"long","Ravenna":"long","Rotterdam":"flat","Sohar":"long","St-Petersburg":"mixed","Taicang":"mixed","Thessaloniki":"long","Zhangjiagang":"mixed"};
+function cargoHTML(pol,pod,comment){
+  const p=pol.toLowerCase(),d=pod.toLowerCase(),cm=(comment||'').toLowerCase();
+  function cf(l){return'<span style="color:#1a5090;font-weight:500">'+l+'</span>';}
+  if(/unpacked|bulk|loose/.test(cm))return cf('Rebars (bulk)');
+  if(/bundle/.test(cm))return cf('Rebars in bundles');
+  if(/coils/.test(cm))return cf('HRC coils');
+  if(/slabs?/.test(cm))return cf('Slabs');
+  if(/billet|square/.test(cm))return cf('Billets');
+  let podType=null;
+  for(const[k,t] of Object.entries(POD_TYPES)){if(d===k.toLowerCase()||d.includes(k.toLowerCase())||k.toLowerCase().includes(d)){podType=t;break;}}
+  const polFlat=['eregli','gebze','ghent','antwerpen','dunkirk','gijon','taicang','st-petersburg'].some(x=>p.includes(x));
+  const polLong=['hereke','icdas','bartin','iskenderun','aliaga','paradip','visakhapatnam','gangavaram','mundra','bayuquan'].some(x=>p.includes(x));
+  if(podType==='long'){if(polFlat)return cf('Billets or slabs');return cf('Billets');}
+  if(podType==='flat'){if(polLong)return cf('Billets (re-rolling)');return cf('HRC or slabs');}
+  if(polFlat)return cf('HRC or slabs');
+  if(polLong)return cf('Billets or rebars');
+  if(p.includes('praia mole'))return cf('Slabs');
+  return cf('Sections or HRC');
+}
+
+function parseCSV(line){const res=[];let cur='',inQ=false;for(let i=0;i<line.length;i++){const c=line[i];if(c==='"'){if(inQ&&line[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}else if(c===','&&!inQ){res.push(cur.trim());cur='';}else cur+=c;}res.push(cur.trim());return res;}
+function parseDate(s){if(!s)return null;s=s.trim();let m;if(m=s.match(/^(\d{2})\.(\d{2})\.(\d{4})$/))return new Date(+m[3],+m[2]-1,+m[1]);if(m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/))return new Date(+m[3],+m[1]-1,+m[2]);if(m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/))return new Date(+m[1],+m[2]-1,+m[3]);const n=+s;if(!isNaN(n)&&n>40000&&n<60000)return new Date(B+n*86400000);const d=new Date(s);return isNaN(d)?null:d;}
+
+function parseCapacityCSV(csv){
+  // Cols: 0=Region, 1=Country, 2=mill, 3=BOF, 4=EAF(Scrap), 5=EAF(HBI), 6=billets, 7=long, 8=slabs, 9=HRC, 10=CRC, 11=HDG, 12=Plate
+  const lines=csv.trim().split('\n'),db={};
+  for(let i=1;i<lines.length;i++){
+    const r=parseCSV(lines[i]);
+    const mill=(r[2]||'').trim();
+    const country=(r[1]||'').trim();
+    if(!mill)continue;
+    const cap={
+      country,
+      billets: r[6]?parseInt(r[6].replace(/[^0-9]/g,''))||null:null,
+      long:    r[7]?parseInt(r[7].replace(/[^0-9]/g,''))||null:null,
+      slabs:   r[8]?parseInt(r[8].replace(/[^0-9]/g,''))||null:null,
+      HRC:     r[9]?parseInt(r[9].replace(/[^0-9]/g,''))||null:null,
+      CRC:     r[10]?parseInt(r[10].replace(/[^0-9]/g,''))||null:null,
+      HDG:     r[11]?parseInt(r[11].replace(/[^0-9]/g,''))||null:null,
+      plate:   r[12]?parseInt(r[12].replace(/[^0-9]/g,''))||null:null,
+    };
+    // Remove nulls
+    Object.keys(cap).forEach(k=>cap[k]===null&&delete cap[k]);
+    db[mill.toLowerCase()]=cap;
+    db[mill]=cap; // also store original case
+  }
+  return db;
+}
+
+function findCapacity(millName){
+  const ml=millName.toLowerCase();
+  if(CAPACITY_DB[ml])return CAPACITY_DB[ml];
+  // Fuzzy: try contains
+  for(const[k,v] of Object.entries(CAPACITY_DB)){
+    if(k.toLowerCase().includes(ml)||ml.includes(k.toLowerCase()))return v;
+  }
+  return null;
+}
+
+function parseOrdersCSV(csv){
+  const lines=csv.trim().split('\n'),allD=[];
+  for(let i=1;i<lines.length;i++){const r=parseCSV(lines[i]);const d=parseDate(r[0]);if(d)allD.push(d.getTime());}
+  const maxD=allD.length?Math.max(...allD):0;
+  const out=[];
+  for(let i=1;i<lines.length;i++){
+    const r=parseCSV(lines[i]);
+    if(!r[1])continue;
+    const pol=(r[3]||'').trim()||(r[4]?'('+r[4]+')':'');
+    const pod=(r[7]||'').trim()||(r[8]?'('+r[8]+')':'');
+    if(!pol||!pod)continue;
+    const ls=parseDate(r[9]),le=parseDate(r[10]);
+    if(!ls||!le)continue;
+    const ds=parseDate(r[0]);
+    const isNew=ds&&ds.getTime()>=maxD;
+    let vol=0;try{vol=parseInt(r[2])||0;}catch(e){}
+    const sysSerial=ds?Math.round((ds.getTime()-B)/86400000):0;
+    out.push([r[1],vol,pol,r[4]||'',r[5]||'',r[6]||'',pod,r[8]||'',
+      Math.round((ls.getTime()-B)/86400000),Math.round((le.getTime()-B)/86400000),
+      r[11]||'',isNew,sysSerial]);
+  }
+  return out;
+}
+function parseMillsCSV(csv){const lines=csv.trim().split('\n'),db={};for(let i=1;i<lines.length;i++){const r=parseCSV(lines[i]);const port=r[0],ms=r[3],conf=r[5];if(!port||!ms||ms==='–'||ms==='-')continue;const parts=ms.replace(/ \/ /g,',').replace(/\//g,',').split(',').map(s=>s.trim().replace(/[.,]+$/,'')).filter(s=>s&&s!=='–');if(parts.length)db[port.toLowerCase()]={m:parts,c:conf||'Low'};}return db;}
+
+async function loadData(){
+  const ldr=document.getElementById('loader');ldr.style.display='flex';
+  function fetchT(url,ms){return new Promise((res,rej)=>{const t=setTimeout(()=>rej(new Error('timeout')),ms);fetch(url).then(r=>{clearTimeout(t);res(r);}).catch(e=>{clearTimeout(t);rej(e);});});}
+  try{
+    document.getElementById('lt').textContent='Loading orders...';document.getElementById('ls2').textContent='fetching';
+    const or=await fetchT(ORDERS_URL,12000);
+    document.getElementById('lt').textContent='Loading mills...';
+    const mr=await fetchT(MILLS_URL,12000);
+    const[ot,mt]=await Promise.all([or.ok?or.text():Promise.resolve(''),mr.ok?mr.text():Promise.resolve('')]);
+    if(ot){RAW=parseOrdersCSV(ot);console.log('Orders:',RAW.length);}
+    if(mt){MILLS_DB=parseMillsCSV(mt);console.log('Mills:',Object.keys(MILLS_DB).length);}
+    // Load capacity data
+    try{
+      const cr=await fetchT(CARGO_CAP_URL,8000);
+      if(cr.ok){const ct=await cr.text();CAPACITY_DB=parseCapacityCSV(ct);console.log('Capacity:',Object.keys(CAPACITY_DB).length);}
+    }catch(e){console.warn('Capacity load failed:',e.message);}
+  }catch(e){console.warn('Using cached:',e.message);}
+  ldr.style.display='none';
+  init();
+}
+
+let DATA=[],MV=1,vf='all',sq='',af='',sk='vol',sd=-1;
+window._slFrom=null;window._slTo=null;
+
+function buildData(){
+  DATA=RAW.map((r,i)=>({id:i,comm:r[0],vol:r[1],pol:r[2],col:r[3],pot:r[4],cot:r[5],pod:r[6],cod:r[7],ls:r[8],le:r[9],comment:r[10],isNew:r[11],sysDate:r[12]||0,cat:cat(r[0])}));
+  MV=Math.max(...DATA.map(r=>r.vol),1);
+}
+function initSlider(){
+  const mn=Math.min(...DATA.map(r=>r.ls)),mx=Math.max(...DATA.map(r=>r.le));
+  const maxSys=DATA.reduce((m,r)=>Math.max(m,r.sysDate||0),0);
+  const sf=document.getElementById('sl-from'),st=document.getElementById('sl-to');
+  sf.min=st.min=mn;sf.max=st.max=mx;
+  sf.value=maxSys>0?maxSys:mn;st.value=mx;
+  updSlider();
+}
+function updSlider(){
+  const sf=document.getElementById('sl-from'),st=document.getElementById('sl-to');
+  const mn=+sf.min,mx=+sf.max;
+  const lo=Math.min(+sf.value,+st.value),hi=Math.max(+sf.value,+st.value);
+  window._slFrom=lo;window._slTo=hi;
+  const lp=((lo-mn)/(mx-mn)*100).toFixed(1),hp=((hi-mn)/(mx-mn)*100).toFixed(1);
+  const fill=document.getElementById('sfill');
+  if(fill)fill.style.cssText='position:absolute;height:4px;background:var(--accent);top:50%;transform:translateY(-50%);pointer-events:none;border-radius:2px;left:'+lp+'%;right:'+(100-parseFloat(hp))+'%;opacity:.7';
+  const lbl=document.getElementById('slbl');if(lbl)lbl.textContent=fmt(lo)+' – '+fmt(hi);
+  render();
+}
+function clearSlider(){
+  window._slFrom=null;window._slTo=null;
+  const sf=document.getElementById('sl-from'),st=document.getElementById('sl-to');
+  if(sf)sf.value=sf.min;if(st)st.value=st.max;
+  const fill=document.getElementById('sfill');
+  if(fill)fill.style.cssText='position:absolute;height:4px;background:var(--accent);top:50%;transform:translateY(-50%);pointer-events:none;border-radius:2px;left:0;right:0;opacity:.7';
+  const lbl=document.getElementById('slbl');if(lbl)lbl.textContent='All dates';
+  render();
+}
+
+function gf(){
+  return DATA.filter(r=>{
+    if(vf==='new'&&!r.isNew)return false;
+    if(vf==='long'&&r.cat!=='long')return false;
+    if(vf==='scrap'&&r.cat!=='scrap')return false;
+    if(vf==='billet'&&r.cat!=='billet')return false;
+    if(vf==='flat'&&r.cat!=='flat')return false;
+    if(vf==='hrc'&&r.cat!=='hrc')return false;
+    if(vf==='other'&&r.cat!=='other')return false;
+    if(window._slFrom&&r.le<window._slFrom)return false;
+    if(window._slTo&&r.ls>window._slTo)return false;
+    if(af){
+      const m=gm(r.pol);const mn=m?m.m.map(x=>x.toLowerCase()):[];const al=af.toLowerCase();
+      if(r.pol!==af&&r.pod!==af&&r.comm.toLowerCase()!==al&&r.col!==af&&r.cod!==af&&!mn.some(x=>x.includes(al)||al.includes(x)))return false;
+    }
+    if(sq&&![r.pol,r.pod,r.comm,r.col,r.cod].some(v=>v&&v.toLowerCase().includes(sq)))return false;
+    return true;
+  }).sort((a,b)=>{const av=a[sk]??0,bv=b[sk]??0;return typeof av==='string'?av.localeCompare(bv)*sd:(av-bv)*sd;});
+}
+function setV(btn,v){vf=v;document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');render();}
+function doSearch(q){sq=q.toLowerCase().replace(/^\//,'');render();}
+function setF(n){af=af===n?'':n;const t=document.getElementById('atag');if(af){t.style.display='inline-flex';document.getElementById('atag-n').textContent=af;}else{t.style.display='none';closeInfo();}render();}
+function clearF(){setF('');closeInfo();}
+
+function closeInfo(){document.getElementById('info-panel').style.display='none';}
+
+function setPort(port){
+  setF(port);
+  // Show port info: mills that export from this port
+  const m=gm(port);
+  const rows=DATA.filter(r=>r.pol===port||r.pod===port);
+  const polRows=rows.filter(r=>r.pol===port);
+  const podRows=rows.filter(r=>r.pod===port);
+  const totalVol=polRows.reduce((s,r)=>s+r.vol,0);
+  let html=`<div class="ip-section">Port Overview</div>
+    <div class="ip-row"><span class="ip-key">Port</span><span class="ip-val">${port}</span></div>
+    <div class="ip-row"><span class="ip-key">Signals as POL</span><span class="ip-val">${polRows.length}</span></div>
+    <div class="ip-row"><span class="ip-key">Signals as POD</span><span class="ip-val">${podRows.length}</span></div>
+    <div class="ip-row"><span class="ip-key">Export volume</span><span class="ip-val">${totalVol>=1000?Math.round(totalVol/1000)+'kt':totalVol+'t'}</span></div>`;
+  if(m){
+    const confCol=m.c==='High'?'var(--green)':m.c==='Medium'?'var(--gold)':'var(--muted)';
+    html+=`<div class="ip-section">Mills at this Port</div>`;
+    m.m.forEach(mill=>{
+      html+=`<div style="padding:6px 0;border-bottom:1px solid var(--border)">
+        <div style="font-weight:500;cursor:pointer;color:var(--blue)" onclick="setMill('${mill.replace(/'/g,"\'")}')">${mill}</div>
+        <div style="font-size:11px;color:${confCol}">${m.c} conf</div>
+      </div>`;
+    });
+  }
+  if(polRows.length){
+    html+=`<div class="ip-section">Active Routes from ${port}</div>`;
+    const byDest={};polRows.forEach(r=>{if(!byDest[r.pod])byDest[r.pod]=0;byDest[r.pod]+=r.vol;});
+    Object.entries(byDest).sort((a,b)=>b[1]-a[1]).forEach(([dest,vol])=>{
+      html+=`<div class="ip-row"><span class="ip-key">${dest}</span><span class="ip-val">${vol>=1000?Math.round(vol/1000)+'kt':vol+'t'}</span></div>`;
+    });
+  }
+  document.getElementById('ip-title').textContent='⚓ '+port;
+  document.getElementById('ip-body').innerHTML=html;
+  const ip=document.getElementById('info-panel');ip.style.display='flex';ip.style.flexDirection='column';
+}
+
+function setMill(mill){
+  // Filter by mill
+  af=mill;
+  const t=document.getElementById('atag');
+  t.style.display='inline-flex';
+  document.getElementById('atag-n').textContent=mill;
+  render();
+
+  // Find mill port entry
+  let millEntry=null;
+  for(const[port,v] of Object.entries(MILLS_DB)){
+    if(v.m.some(m=>m.toLowerCase()===mill.toLowerCase()||m.toLowerCase().includes(mill.toLowerCase())||mill.toLowerCase().includes(m.toLowerCase()))){
+      millEntry={port,conf:v.c};break;
+    }
+  }
+
+  // Get capacity data
+  const cap=findCapacity(mill);
+  const capProducts=cap?Object.entries(cap).filter(([k,v])=>k!=='country'&&v&&!isNaN(v)):[];
+
+  // Build panel: title = mill name, then export port, then capacity only
+  let html='';
+
+  // Export port
+  if(millEntry){
+    html+=`<div class="ip-row"><span class="ip-key">Export port</span><span class="ip-val">${millEntry.port}</span></div>`;
+  }
+
+  // Capacity from Cargo sheet
+  if(capProducts.length){
+    html+=`<div class="ip-section">Production Capacity (kt/y)</div>`;
+    const labels={billets:'Billets',long:'Long products',slabs:'Slabs',HRC:'HRC',CRC:'CRC',HDG:'HDG',plate:'Plate'};
+    capProducts.forEach(([k,v])=>{
+      const lbl=labels[k]||k.charAt(0).toUpperCase()+k.slice(1);
+      html+=`<div class="ip-row"><span class="ip-key">${lbl}</span><span class="ip-val" style="font-weight:600;color:var(--accent)">${Number(v).toLocaleString()} kt</span></div>`;
+    });
+  } else {
+    html+=`<div style="color:var(--muted);font-size:11px;margin-top:8px;font-style:italic">Capacity data will appear after<br>Google Sheets loads</div>`;
+  }
+
+  document.getElementById('ip-title').textContent='🏭 '+mill;
+  document.getElementById('ip-body').innerHTML=html;
+  const ip=document.getElementById('info-panel');ip.style.display='flex';ip.style.flexDirection='column';
+}
+function sb(k){if(sk===k)sd*=-1;else{sk=k;sd=-1;}document.querySelectorAll('th').forEach(t=>t.classList.remove('s'));event.currentTarget.classList.add('s');event.currentTarget.querySelector('.sa').textContent=sd===-1?'↓':'↑';render();}
+
+function render(){
+  const rows=gf();
+  const tv=rows.reduce((s,r)=>s+r.vol,0);
+  document.getElementById('showing').textContent=rows.length;
+  document.getElementById('total-c').textContent=DATA.length;
+  document.getElementById('showing-v').textContent=Math.round(tv/1000);
+  document.getElementById('h-total').textContent=DATA.length;
+  document.getElementById('h-vol').textContent=Math.round(DATA.reduce((s,r)=>s+r.vol,0)/1000)+'kt';
+  document.getElementById('h-new').textContent=DATA.filter(r=>r.isNew).length;
+  const e=s=>s.replace(/'/g,"\\'");
+  document.getElementById('tbody').innerHTML=rows.map(r=>{
+    const m=gm(r.pol);
+    const confCol=m?(m.c==='High'?'var(--green)':m.c==='Medium'?'var(--gold)':'var(--muted)'):'var(--muted)';
+    const prodCell=m?m.m.map(x=>{const xq=x.replace(/'/g,"\'");return '<span class="pl" style="color:var(--text)" onclick="event.stopPropagation();setMill(\''+xq+'\')">'+x+'</span>';}).join(' <span style="color:var(--dim)">/</span> ')+'<span style="color:'+confCol+';font-size:10px;margin-left:4px">('+m.c+' conf)</span>':'<span style="color:var(--muted)">—</span>';
+    return`<tr class="${r.isNew?'nr':''}" onclick="">
+      <td style="white-space:nowrap"><span class="pl" style="color:${CC[r.cat]};font-weight:500" onclick="event.stopPropagation();setF('${e(r.comm)}')">${r.comm}</span>${r.isNew?'<sup style="color:var(--gold);font-size:8px;font-weight:700;margin-left:3px">NEW</sup>':''}</td>
+      <td style="font-size:11px">${r.comm.toLowerCase()==='steel product'?cargoHTML(r.pol,r.pod,r.comment):''}</td>
+      <td style="font-weight:600;text-align:right;font-family:var(--mono);font-size:12px">${r.vol>=1000?(r.vol/1000).toFixed(0)+'kt':r.vol+'t'}</td>
+      <td><span class="pl" style="font-weight:500" onclick="event.stopPropagation();setPort('${e(r.pol)}')">${r.pol}</span></td>
+      <td style="color:var(--muted);font-size:11px"><span class="pl" onclick="event.stopPropagation();setF('${e(r.col)}')" title="${r.col}">${iso(r.col)}</span></td>
+      <td><span class="pl" style="color:var(--blue)" onclick="event.stopPropagation();setPort('${e(r.pod)}')">${r.pod}</span></td>
+      <td style="color:var(--muted);font-size:11px"><span class="pl" onclick="event.stopPropagation();setF('${e(r.cod)}')" title="${r.cod}">${iso(r.cod)}</span></td>
+      <td style="color:var(--muted);font-size:11px;font-family:var(--mono)">${fmt(r.ls)}</td>
+      <td style="color:var(--muted);font-size:11px;font-family:var(--mono)">${fmt(r.le)}</td>
+      <td style="font-size:11px">${prodCell}</td>
+    </tr>`;
+  }).join('');
+}
+
+function exportXLS(){
+  if(!window.XLSX)return;const rows=gf();if(!rows.length)return;
+  const today=new Date().toLocaleDateString('en',{day:'2-digit',month:'long',year:'numeric'});
+  const dt=new Date().toISOString().slice(0,10);
+  const wb=XLSX.utils.book_new();
+  const hdr=[['SteelLoadings Export · '+today],[],['Commodity','Likely Commodity','Volume (t)','Origin Port','Country','Via','Dest Port','Country','Load From','Load To','Producer','Confidence','Date in System']];
+  const data=rows.map(r=>{const m=gm(r.pol);const lc=r.comm.toLowerCase()==='steel product'?cargoHTML(r.pol,r.pod,r.comment).replace(/<[^>]+>/g,''):'';return[r.comm,lc,r.vol,r.pol,r.col,r.pot||'',r.pod,r.cod,fmt(r.ls),fmt(r.le),m?m.m.join(' / '):'',m?m.c:'',r.sysDate?fmt(r.sysDate):''];});
+  const ws=XLSX.utils.aoa_to_sheet([...hdr,...data]);
+  ws['!cols']=[{wch:14},{wch:20},{wch:10},{wch:20},{wch:16},{wch:14},{wch:20},{wch:16},{wch:10},{wch:10},{wch:26},{wch:10},{wch:14}];
+  ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:12}}];
+  XLSX.utils.book_append_sheet(wb,ws,'Signals');
+  const byC={};rows.forEach(r=>{if(!byC[r.comm])byC[r.comm]={n:0,vol:0};byC[r.comm].n++;byC[r.comm].vol+=r.vol;});
+  const ws2=XLSX.utils.aoa_to_sheet([['Summary'],[],['Total signals',rows.length],['Total volume (t)',rows.reduce((s,r)=>s+r.vol,0)],['New',rows.filter(r=>r.isNew).length],[''],['Commodity','Signals','Volume (t)'],...Object.entries(byC).sort((a,b)=>b[1].vol-a[1].vol).map(([c,v])=>[c,v.n,v.vol])]);
+  XLSX.utils.book_append_sheet(wb,ws2,'Summary');
+  XLSX.writeFile(wb,'SteelLoadings_'+dt+'.xlsx');
+}
+
+function openM(id){document.getElementById('m-'+id).classList.add('open');if(id==='brief')buildBrief();}
+function closeM(id){document.getElementById('m-'+id).classList.remove('open');}
+function getRegion(c){const l=(c||'').toLowerCase();if(['turkey','ukraine','romania','bulgaria'].some(x=>l.includes(x)))return'Black Sea';if(['france','uk','germany','belgium','netherlands','italy','spain','denmark','norway','sweden','finland','poland','estonia','greece'].some(x=>l.includes(x)))return'Europe';if(['uae','saudi','oman','egypt','iran','israel'].some(x=>l.includes(x)))return'MENA';if(['india','bangladesh','pakistan'].some(x=>l.includes(x)))return'South Asia';if(['china','south korea','taiwan','japan','vietnam','malaysia','indonesia'].some(x=>l.includes(x)))return'Asia';if(['russia','kazakhstan'].some(x=>l.includes(x)))return'CIS';if(['brazil','colombia','peru','argentina','chile','usa','mexico'].some(x=>l.includes(x)))return'Americas';return'Other';}
+
+function buildBrief(){
+  const nr=DATA.filter(r=>r.isNew).sort((a,b)=>b.vol-a.vol);
+  if(!nr.length){document.getElementById('brief-body').innerHTML='<p style="color:var(--muted);text-align:center;padding:20px">No new loadings.</p>';return;}
+  const tv=nr.reduce((s,r)=>s+r.vol,0);
+  const regs={};nr.forEach(r=>{const rg=getRegion(r.cod);if(!regs[rg])regs[rg]=[];regs[rg].push(r);});
+  const trows=nr.map(r=>`<tr><td>${r.comm}</td><td>${(r.vol/1000).toFixed(1)}kt</td><td>${r.pol} (${iso(r.col)})</td><td>${r.pod} (${iso(r.cod)})</td><td>${fmt(r.ls)}–${fmt(r.le)}</td></tr>`).join('');
+  let commentary='';
+  for(const[reg,orders] of Object.entries(regs)){
+    const sents=orders.map(r=>{const m=gm(r.pol);const prod=m&&m.c==='High'?' ('+m.m.slice(0,1).join('/')+')'  :'';return`${(r.vol/1000).toFixed(0)}kt ${r.comm}${prod} from ${r.pol} to ${r.pod}, loading ${fmt(r.ls)}–${fmt(r.le)}`;});
+    commentary+=`<h3>${reg}</h3><p>${sents.join('. ')}.</p>`;
+  }
+  document.getElementById('brief-body').innerHTML=`<div class="brief-c">
+    <p><b>${nr.length} new pre-fixture signal${nr.length>1?'s':''} today</b>, totalling ${(tv/1000).toFixed(0)}kt across ${Object.keys(regs).length} region${Object.keys(regs).length>1?'s':''}.</p>
+    <table class="brief-tbl"><thead><tr><th>Commodity</th><th>Volume</th><th>Origin</th><th>Destination</th><th>Laycan</th></tr></thead><tbody>${trows}</tbody></table>
+    ${commentary}
+    <p style="font-size:10px;color:var(--muted);border-top:1px solid var(--border);padding-top:8px;margin-top:12px">© MetalExpert · SteelLoadings · pre-fixture intelligence</p>
+  </div>`;
+}
+function pdfBrief(){
+  const pa=document.getElementById('parea');
+  pa.innerHTML='<h1>SteelLoadings — New Loading Brief</h1><div style="font-size:9pt;color:#666;margin-bottom:12pt">'+new Date().toLocaleDateString('en',{day:'numeric',month:'long',year:'numeric'})+' · MetalExpert</div>'+document.getElementById('brief-body').innerHTML+'<div class="pfoot">SteelLoadings pre-fixture intelligence · MetalExpert</div>';
+  pa.style.display='block';setTimeout(()=>{window.print();setTimeout(()=>{pa.style.display='none';},500);},100);
+}
+function xlsBrief(){
+  if(!window.XLSX)return;
+  const nr=DATA.filter(r=>r.isNew).sort((a,b)=>b.vol-a.vol);
+  const wb=XLSX.utils.book_new();
+  const today=new Date().toLocaleDateString('en',{day:'2-digit',month:'long',year:'numeric'});
+  const hdr=[['New Loading Brief · '+today],[],['Commodity','Volume (t)','Origin','Country','Destination','Country','Load From','Load To','Producer','Confidence']];
+  const rows=nr.map(r=>{const m=gm(r.pol);return[r.comm,r.vol,r.pol,r.col,r.pod,r.cod,fmt(r.ls),fmt(r.le),m?m.m.join(' / '):'',m?m.c:''];});
+  const ws=XLSX.utils.aoa_to_sheet([...hdr,...rows]);
+  ws['!cols']=[{wch:14},{wch:10},{wch:20},{wch:16},{wch:20},{wch:16},{wch:10},{wch:10},{wch:26},{wch:10}];
+  XLSX.utils.book_append_sheet(wb,ws,'New Loadings');
+  XLSX.writeFile(wb,'SteelLoadings_Brief_'+new Date().toISOString().slice(0,10)+'.xlsx');
+}
+
+function toggleTheme(){
+  const isDark=document.body.classList.toggle('dark');
+  document.getElementById('theme-btn').textContent=isDark?'Light':'Dark';
+  localStorage.setItem('sl-theme',isDark?'dark':'light');
+}
+function applyTheme(){
+  const t=localStorage.getItem('sl-theme')||'light';
+  if(t==='dark'){document.body.classList.add('dark');document.getElementById('theme-btn').textContent='Light';}
+}
+function init(){buildData();initSlider();applyTheme();}
+loadData();
+</script></body></html>
